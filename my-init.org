@@ -11,10 +11,10 @@
   (defalias 'list-buffers 'ibuffer)
   (defalias 'list-buffers 'ibuffer-other-window)
 
-  (use-package monokai-theme
+  (use-package flatland-theme
       :ensure t
       :config (when (display-graphic-p)
-                (load-theme 'monokai)))
+                (load-theme 'flatland)))
 
 
 #+END_SRC
@@ -102,10 +102,12 @@ Elite search experience!
 #+END_SRC
   
 * Magit
+
 #+BEGIN_SRC emacs-lisp
   (use-package magit
      :ensure t)
 #+END_SRC
+
 * ACE
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
@@ -119,6 +121,7 @@ Elite search experience!
 #+END_SRC
 
 * Autocomplete
+
 #+BEGIN_SRC emacs-lisp
 (use-package auto-complete
   :ensure t
@@ -131,7 +134,9 @@ Elite search experience!
 (use-package fuzzy
    :ensure t)
 #+END_SRC
+
 * SLIME
+
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/slime")
 (require 'slime-autoloads)
@@ -154,6 +159,7 @@ Elite search experience!
       (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))
 
 #+END_SRC
+
 * Colors for nicks in ERC
 consider moving it to other files because it REEEEKS
 #+BEGIN_SRC emacs-lisp
@@ -215,6 +221,7 @@ you'll change the colors used for nicks."
 #+END_SRC
 
 * Python
+
 #+BEGIN_SRC emacs-lisp
   (use-package jedi
                :ensure t
@@ -223,3 +230,4 @@ you'll change the colors used for nicks."
                (add-hook 'python-mode-hook 'jedi:ac-setup))
   (setq jedi:complete-on-dot t)
 #+END_SRC
+

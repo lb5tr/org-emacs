@@ -8,7 +8,7 @@
  '(ac-use-fuzzy t)
  '(custom-safe-themes
    (quote
-    ("3629b62a41f2e5f84006ff14a2247e679745896b5eaa1d5bcfbc904a3441b0cd" "28ec8ccf6190f6a73812df9bc91df54ce1d6132f18b4c8fcc85d45298569eb53" default)))
+    ("a2e7b508533d46b701ad3b055e7c708323fb110b6676a8be458a758dd8f24e27" "3629b62a41f2e5f84006ff14a2247e679745896b5eaa1d5bcfbc904a3441b0cd" "28ec8ccf6190f6a73812df9bc91df54ce1d6132f18b4c8fcc85d45298569eb53" default)))
  '(package-selected-packages
    (quote
     (counsel swiper lorem-ipsum tabbar ace-window org-bullets which-key try use-package))))
