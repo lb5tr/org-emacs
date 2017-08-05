@@ -3,15 +3,19 @@
 * Basic look-and-feel
 
 #+BEGIN_SRC emacs-lisp
-;; Our stuff
-(setq inhibit-startup-message t)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(fset 'yes-or-no-p 'y-or-n-p)
-(global-set-key (kbd "<f5>") 'revert-buffer)
+  (setq inhibit-startup-message t)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (global-set-key (kbd "<f5>") 'revert-buffer)
+  (defalias 'list-buffers 'ibuffer)
+  (defalias 'list-buffers 'ibuffer-other-window)
 
-(defalias 'list-buffers 'ibuffer)
-(defalias 'list-buffers 'ibuffer-other-window)
+  (use-package monokai-theme
+      :ensure t
+      :config (when (display-graphic-p)
+                (load-theme 'monokai)))
+
 
 #+END_SRC
 
@@ -79,19 +83,23 @@ Elite search experience!
 * ERC
 
 #+BEGIN_SRC emacs-lisp
+
+  (defvar *freenode-irc-password-file* "~/.emacs.d/irc.pw")
+
   (defun get-irc-password ()
     ;;TODO: add encryption
-    (let ((x (expand-file-name "~/.emacs.d/irc.pw")))
+    (let ((x (expand-file-name *freenode-irc-password-file*)))
       (with-temp-buffer
         (insert-file-contents x)
         (buffer-string))))
 
   (setq erc-autojoin-channels-alist  '(("irc.freenode.net", "#lolkrowy")))
   (setq erc-rename-buffers t)
-  (erc :server "irc.freenode.net" :port 6667 :password (get-irc-password) :nick "kubov")
+
+  (if (file-exists-p *freenode-irc-password-file*)
+      (erc :server "irc.freenode.net" :port 6667 :password (get-irc-password) :nick "kubov"))
 #+END_SRC
   
-
 * Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
