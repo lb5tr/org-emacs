@@ -227,7 +227,13 @@ you'll change the colors used for nicks."
                :ensure t
                :init
                (add-hook 'python-mode-hook 'jedi:setup)
-               (add-hook 'python-mode-hook 'jedi:ac-setup))
-  (setq jedi:complete-on-dot t)
+               (add-hook 'python-mode-hook 'jedi:ac-setup)
+               (setq jedi:complete-on-dot t)
+               (setq python-shell-interpreter "python3"))
+
+  (use-package py-autopep8
+      :ensure t
+      :init
+      (add-hook 'python-mode-hook (lambda () (add-hook 'before-save-hook 'py-autopep8))))
 #+END_SRC
 
