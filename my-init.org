@@ -139,7 +139,7 @@ Elite search experience!
       lisp-indent-function 'common-lisp-indent-function
       slime-startup-animation t
       slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-      common-lisp-hyperspec-root (expand-file-name "~/HyperSpec"))
+      common-lisp-hyperspec-root (expand-file-name "~/HyperSpec/"))
 
 (add-to-list 'slime-contribs 'slime-repl)
 ;;(add-to-list 'slime-contribs 'slime-fuzzy)
