@@ -1,0 +1,215 @@
+#+STARTUP: overview
+* My super-awesome emacs configuration file
+* Basic look-and-feel
+
+#+BEGIN_SRC emacs-lisp
+;; Our stuff
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+(global-set-key (kbd "<f5>") 'revert-buffer)
+
+(defalias 'list-buffers 'ibuffer)
+(defalias 'list-buffers 'ibuffer-other-window)
+
+#+END_SRC
+
+* Try
+#+BEGIN_SRC emacs-lisp
+(use-package try
+	:ensure t)
+#+END_SRC
+
+* Which-key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+	:ensure t
+	:config
+	(which-key-mode))
+#+END_SRC emacs-lisp
+ 
+* Org-mode stuff
+
+#+BEGIN_SRC emacs-lisp
+
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+
+* Ivy-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :ensure t
+  :diminish (ivy-mode)
+  :bind (("C-x b" . ivy-switch-buffer))
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-display-style 'fancy))
+#+END_SRC
+
+* Swiper
+Elite search experience!
+
+#+BEGIN_SRC emacs-lisp
+;; it looks like counsel is a requirement for swiper
+(use-package counsel
+  :ensure t)
+
+(use-package swiper
+  :ensure try
+  :bind (("C-s" . swiper)
+	 ("C-r" . swiper)
+	 ("C-c C-r" . ivy-resume)
+	 ("M-x" . counsel-M-x)
+	 ("C-x C-f" . counsel-find-file))
+  :config
+  (progn
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-display-style 'fancy)
+    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)))
+#+END_SRC
+
+* ERC
+
+#+BEGIN_SRC emacs-lisp
+  (defun get-irc-password ()
+    ;;TODO: add encryption
+    (let ((x (expand-file-name "~/.emacs.d/irc.pw")))
+      (with-temp-buffer
+        (insert-file-contents x)
+        (buffer-string))))
+
+  (setq erc-autojoin-channels-alist  '(("irc.freenode.net", "#lolkrowy")))
+  (setq erc-rename-buffers t)
+  (erc :server "irc.freenode.net" :port 6667 :password (get-irc-password) :nick "kubov")
+#+END_SRC
+  
+
+* Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+     :ensure t)
+#+END_SRC
+* ACE
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+  :ensure t
+  :init
+  (progn
+    (global-set-key [remap other-window] 'ace-window)
+    (custom-set-faces
+     '(aw-leading-char-face
+       ((t (:inherit ace-jump-face-foreground :height 3.0)))))))
+#+END_SRC
+
+* Autocomplete
+#+BEGIN_SRC emacs-lisp
+(use-package auto-complete
+  :ensure t
+  :init (progn
+	  (ac-config-default)
+	  (global-auto-complete-mode t)
+          (global-set-key (kbd "M-C-I") 'ac-fuzzy-complete)))
+
+
+(use-package fuzzy
+   :ensure t)
+#+END_SRC
+* SLIME
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/slime")
+(require 'slime-autoloads)
+(setq inferior-lisp-program "/usr/bin/sbcl"
+      lisp-indent-function 'common-lisp-indent-function
+      slime-startup-animation t
+      slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+      common-lisp-hyperspec-root (expand-file-name "~/HyperSpec"))
+
+(add-to-list 'slime-contribs 'slime-repl)
+;;(add-to-list 'slime-contribs 'slime-fuzzy)
+
+(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+
+(use-package ac-slime
+   :ensure t
+   :config (progn
+      (add-hook 'slime-mode-hook 'set-up-slime-ac)
+      (add-hook 'slime-repl-hook 'set-up-slime-ac)
+      (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))
+
+#+END_SRC
+* Colors for nicks in ERC
+consider moving it to other files because it REEEEKS
+#+BEGIN_SRC emacs-lisp
+(setq nick-face-list '())
+
+;; Define the list of colors to use when coloring IRC nicks.
+(setq-default erc-colors-list '("blue" "green" "yellow"
+				"gray" "brown" "red"
+				"purple" "white" "cyan"))
+
+(defun build-nick-face-list ()
+    "build-nick-face-list builds a list of new faces using the
+foreground colors specified in erc-colors-list.  The nick faces
+created here will be used to format IRC nicks."
+    (setq i -1)
+    (setq nick-face-list
+	  (mapcar
+	   (lambda (COLOR)
+	     (setq i (1+ i))
+	     (list (custom-declare-face
+		    (make-symbol (format "erc-nick-face-%d" i))
+		    (list (list t (list :foreground COLOR)))
+		    (format "Nick face %d" i))))
+	   erc-colors-list)))
+
+(defun my-insert-modify-hook ()
+    "This insert-modify hook looks for nicks in new messages and
+computes md5(nick) and uses substring(md5_value, 0, 4) mod (length
+nick-face-list) to index the face list and produce the same face for a
+given nick each time it is seen.  We get a lot of collisions this way,
+unfortunately, but it's better than some other methods I tried.
+Additionally, if you change the order or size of the erc-colors-list,
+you'll change the colors used for nicks."
+    (if (null nick-face-list) (build-nick-face-list))
+    (save-excursion
+      (goto-char (point-min))
+      (if (looking-at "<\\([^>]*\\)>")
+	  (let ((nick (match-string 1)))
+	    (put-text-property (match-beginning 1) (match-end 1)
+			       'face (nth
+				      (mod (string-to-number
+					    (substring (md5 nick) 0 4) 16)
+					   (length nick-face-list))
+				      nick-face-list))))))
+
+;; This adds the ERC message insert hook.
+(add-hook 'erc-insert-modify-hook 'my-insert-modify-hook)
+
+(provide 'erc-nick-colors)
+(require 'erc-nick-colors)
+
+#+END_SRC
+
+* Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+               :ensure t
+               :config (global-flycheck-mode t))
+#+END_SRC
+
+* Python
+#+BEGIN_SRC emacs-lisp
+  (use-package jedi
+               :ensure t
+               :init
+               (add-hook 'python-mode-hook 'jedi:setup)
+               (add-hook 'python-mode-hook 'jedi:ac-setup))
+#+END_SRC
