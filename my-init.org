@@ -138,25 +138,27 @@ Elite search experience!
 * SLIME
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/slime")
-(require 'slime-autoloads)
-(setq inferior-lisp-program "/usr/bin/sbcl"
-      lisp-indent-function 'common-lisp-indent-function
-      slime-startup-animation t
-      slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-      common-lisp-hyperspec-root (expand-file-name "~/HyperSpec/"))
 
-(add-to-list 'slime-contribs 'slime-repl)
-;;(add-to-list 'slime-contribs 'slime-fuzzy)
+(if (file-directory-p (expand-file-name "~/slime"))
+    ((add-to-list 'load-path "~/slime")
+     (require 'slime-autoloads)
+     (setq inferior-lisp-program "/usr/bin/sbcl"
+	   lisp-indent-function 'common-lisp-indent-function
+	   slime-startup-animation t
+	   slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+	   common-lisp-hyperspec-root (expand-file-name "~/HyperSpec/"))
 
-(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+     (add-to-list 'slime-contribs 'slime-repl)
+     ;;(add-to-list 'slime-contribs 'slime-fuzzy)
 
-(use-package ac-slime
-   :ensure t
-   :config (progn
-      (add-hook 'slime-mode-hook 'set-up-slime-ac)
-      (add-hook 'slime-repl-hook 'set-up-slime-ac)
-      (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))
+     (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+
+     (use-package ac-slime
+       :ensure t
+       :config (progn
+		 (add-hook 'slime-mode-hook 'set-up-slime-ac)
+		 (add-hook 'slime-repl-hook 'set-up-slime-ac)
+		 (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))))
 
 #+END_SRC
 
@@ -235,5 +237,25 @@ you'll change the colors used for nicks."
       :ensure t
       :init
       (add-hook 'python-mode-hook (lambda () (add-hook 'before-save-hook 'py-autopep8))))
+
+  (setq jedi:environment-virtualenv
+       (list "virtualenv3" "--system-site-packages"))
+
+#+END_SRC
+  
+* Golang
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-mode :ensure t)
 #+END_SRC
 
+* Indent
+#+BEGIN_SRC emacs-lisp
+
+ (setq-default
+  tab-width 2
+  standard-indent 2
+  indent-tabs-mode nil)
+
+ (setq-default c-default-style "linux" c-basic-offset 4)
+#+END_SRC
