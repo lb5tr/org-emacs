@@ -3,8 +3,11 @@
 * Basic look-and-feel
 
 #+BEGIN_SRC emacs-lisp
+  (global-subword-mode 1)
+  (visual-line-mode)
   (setq inhibit-startup-message t)
   (tool-bar-mode -1)
+  (scroll-bar-mode -1)
   (menu-bar-mode -1)
   (fset 'yes-or-no-p 'y-or-n-p)
   (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -14,15 +17,19 @@
   (use-package flatland-theme
       :ensure t
       :config (when (display-graphic-p)
-                (load-theme 'flatland)))
+                (load-theme 'misterioso)))
 
+  (use-package neotree
+      :ensure t)
 
+  (use-package centered-window :ensure t)
+  (setq line-move-visual t)
 #+END_SRC
 
 * Try
 #+BEGIN_SRC emacs-lisp
 (use-package try
-	:ensure t)
+  :ensure t)
 #+END_SRC
 
 * Which-key
@@ -33,7 +40,7 @@
           :config
           (which-key-mode))
 #+END_SRC
- 
+
 * Org-mode stuff
 
 #+BEGIN_SRC emacs-lisp
@@ -42,7 +49,7 @@
 (use-package org-bullets
   :ensure t
   :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode nil))))
 #+END_SRC
 
 * Ivy-mode
@@ -69,10 +76,10 @@ Elite search experience!
 (use-package swiper
   :ensure try
   :bind (("C-s" . swiper)
-	 ("C-r" . swiper)
-	 ("C-c C-r" . ivy-resume)
-	 ("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file))
+   ("C-r" . swiper)
+   ("C-c C-r" . ivy-resume)
+   ("M-x" . counsel-M-x)
+   ("C-x C-f" . counsel-find-file))
   :config
   (progn
     (ivy-mode 1)
@@ -100,7 +107,7 @@ Elite search experience!
   (if (file-exists-p *freenode-irc-password-file*)
       (erc :server "irc.freenode.net" :port 6667 :password (get-irc-password) :nick "kubov"))
 #+END_SRC
-  
+
 * Magit
 
 #+BEGIN_SRC emacs-lisp
@@ -126,8 +133,8 @@ Elite search experience!
 (use-package auto-complete
   :ensure t
   :init (progn
-	  (ac-config-default)
-	  (global-auto-complete-mode t)
+    (ac-config-default)
+    (global-auto-complete-mode t)
           (global-set-key (kbd "M-C-I") 'ac-fuzzy-complete)))
 
 
@@ -143,10 +150,10 @@ Elite search experience!
     ((add-to-list 'load-path "~/slime")
      (require 'slime-autoloads)
      (setq inferior-lisp-program "/usr/bin/sbcl"
-	   lisp-indent-function 'common-lisp-indent-function
-	   slime-startup-animation t
-	   slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-	   common-lisp-hyperspec-root (expand-file-name "~/HyperSpec/"))
+     lisp-indent-function 'common-lisp-indent-function
+     slime-startup-animation t
+     slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+     common-lisp-hyperspec-root (expand-file-name "~/HyperSpec/"))
 
      (add-to-list 'slime-contribs 'slime-repl)
      ;;(add-to-list 'slime-contribs 'slime-fuzzy)
@@ -156,9 +163,9 @@ Elite search experience!
      (use-package ac-slime
        :ensure t
        :config (progn
-		 (add-hook 'slime-mode-hook 'set-up-slime-ac)
-		 (add-hook 'slime-repl-hook 'set-up-slime-ac)
-		 (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))))
+     (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     (add-hook 'slime-repl-hook 'set-up-slime-ac)
+     (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))))
 
 #+END_SRC
 
@@ -169,8 +176,8 @@ consider moving it to other files because it REEEEKS
 
 ;; Define the list of colors to use when coloring IRC nicks.
 (setq-default erc-colors-list '("blue" "green" "yellow"
-				"gray" "brown" "red"
-				"purple" "white" "cyan"))
+        "gray" "brown" "red"
+        "purple" "white" "cyan"))
 
 (defun build-nick-face-list ()
     "build-nick-face-list builds a list of new faces using the
@@ -178,14 +185,14 @@ foreground colors specified in erc-colors-list.  The nick faces
 created here will be used to format IRC nicks."
     (setq i -1)
     (setq nick-face-list
-	  (mapcar
-	   (lambda (COLOR)
-	     (setq i (1+ i))
-	     (list (custom-declare-face
-		    (make-symbol (format "erc-nick-face-%d" i))
-		    (list (list t (list :foreground COLOR)))
-		    (format "Nick face %d" i))))
-	   erc-colors-list)))
+    (mapcar
+     (lambda (COLOR)
+       (setq i (1+ i))
+       (list (custom-declare-face
+        (make-symbol (format "erc-nick-face-%d" i))
+        (list (list t (list :foreground COLOR)))
+        (format "Nick face %d" i))))
+     erc-colors-list)))
 
 (defun my-insert-modify-hook ()
     "This insert-modify hook looks for nicks in new messages and
@@ -199,13 +206,13 @@ you'll change the colors used for nicks."
     (save-excursion
       (goto-char (point-min))
       (if (looking-at "<\\([^>]*\\)>")
-	  (let ((nick (match-string 1)))
-	    (put-text-property (match-beginning 1) (match-end 1)
-			       'face (nth
-				      (mod (string-to-number
-					    (substring (md5 nick) 0 4) 16)
-					   (length nick-face-list))
-				      nick-face-list))))))
+    (let ((nick (match-string 1)))
+      (put-text-property (match-beginning 1) (match-end 1)
+             'face (nth
+              (mod (string-to-number
+              (substring (md5 nick) 0 4) 16)
+             (length nick-face-list))
+              nick-face-list))))))
 
 ;; This adds the ERC message insert hook.
 (add-hook 'erc-insert-modify-hook 'my-insert-modify-hook)
@@ -242,7 +249,7 @@ you'll change the colors used for nicks."
        (list "virtualenv3" "--system-site-packages"))
 
 #+END_SRC
-  
+
 * Golang
 
 #+BEGIN_SRC emacs-lisp
@@ -256,16 +263,17 @@ you'll change the colors used for nicks."
    (require 'go-autocomplete))
 #+END_SRC
 
-
 * Indent
 #+BEGIN_SRC emacs-lisp
 
  (setq-default
   tab-width 2
-  standard-indent 2
+  standard-indent 1
   indent-tabs-mode nil)
 
  (setq-default c-default-style "linux" c-basic-offset 4)
+
+ (setq-default js-indent-level 2)
 #+END_SRC
 * Rust
 #+BEGIN_SRC emacs-lisp
@@ -291,3 +299,37 @@ This is used for fuzzy search in M-x
 
 #+END_SRC
 
+* JavaScript
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode :ensure t)
+(use-package xref-js2 :ensure t)
+(use-package company :ensure t)
+(use-package company-tern :ensure t)
+
+(add-to-list 'company-backends 'company-tern)
+
+
+(add-to-list 'auto-mode-alist `(,(rx ".js" string-end) . js2-mode))
+(define-key js2-mode-map (kbd "M-.") nil)
+
+(add-hook 'js2-mode-hook (lambda ()
+  (tern-mode)
+  (company-mode)
+  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+
+(define-key tern-mode-keymap (kbd "M-.") nil)
+(define-key tern-mode-keymap (kbd "M-,") nil)
+#+END_SRC
+
+
+* Origami
+#+BEGIN_SRC emacs-lisp
+(use-package origami :ensure t)
+
+(define-key origami-mode-map (kbd "C-c c") 'origami-close-node)
+(define-key origami-mode-map (kbd "C-c o") 'origami-recursively-toggle-node)
+
+(define-key origami-mode-map (kbd "C-c v") 'origami-close-all-nodes)
+(define-key origami-mode-map (kbd "C-c p") 'origami-open-all-nodes)
+
+#+Endo_SrcoC
