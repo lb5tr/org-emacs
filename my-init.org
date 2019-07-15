@@ -3,6 +3,8 @@
 * Basic look-and-feel
 
 #+BEGIN_SRC emacs-lisp
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (set-language-environment "UTF-8")
   (global-subword-mode 1)
   (visual-line-mode)
   (setq inhibit-startup-message t)
@@ -13,7 +15,6 @@
   (global-set-key (kbd "<f5>") 'revert-buffer)
   (defalias 'list-buffers 'ibuffer)
   (defalias 'list-buffers 'ibuffer-other-window)
-
   (use-package flatland-theme
       :ensure t
       :config (when (display-graphic-p)
@@ -24,6 +25,8 @@
 
   (use-package centered-window :ensure t)
   (setq line-move-visual t)
+;;  (global-linum-mode)
+
 #+END_SRC
 
 * Try
@@ -44,12 +47,16 @@
 * Org-mode stuff
 
 #+BEGIN_SRC emacs-lisp
+;; Org
+  (add-hook 'org-mode-hook
+            (lambda ()
+              ;; Set fill column to 79
+              (setq fill-column 79)
+              ;; Enable automatic line wrapping at fill column
+              (auto-fill-mode )))
 
-
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode nil))))
+(setq org-startup-folded nil)
+(setq org-src-fontify-natively t)
 #+END_SRC
 
 * Ivy-mode
@@ -117,14 +124,14 @@ Elite search experience!
 
 * ACE
 #+BEGIN_SRC emacs-lisp
-(use-package ace-window
-  :ensure t
-  :init
-  (progn
-    (global-set-key [remap other-window] 'ace-window)
-    (custom-set-faces
-     '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 3.0)))))))
+;(use-package ace-window
+;  :ensure t
+;  :init
+;  (progn
+;   (global-set-key [remap other-window] 'ace-window)
+;    (custom-set-faces
+;     '(aw-leading-char-face
+;       ((t (:inherit ace-jump-face-foreground :height 3.0)))))))
 #+END_SRC
 
 * Autocomplete
@@ -320,7 +327,6 @@ This is used for fuzzy search in M-x
 (define-key tern-mode-keymap (kbd "M-.") nil)
 (define-key tern-mode-keymap (kbd "M-,") nil)
 #+END_SRC
-
 
 * Origami
 #+BEGIN_SRC emacs-lisp
