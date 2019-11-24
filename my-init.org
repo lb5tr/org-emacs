@@ -152,11 +152,9 @@ Elite search experience!
 * SLIME
 
 #+BEGIN_SRC emacs-lisp
+(use-package slime :ensure t)
 
-(if (file-directory-p (expand-file-name "~/slime"))
-    ((add-to-list 'load-path "~/slime")
-     (require 'slime-autoloads)
-     (setq inferior-lisp-program "/usr/bin/sbcl"
+     (setq inferior-lisp-program "/usr/local/bin/sbcl"
      lisp-indent-function 'common-lisp-indent-function
      slime-startup-animation t
      slime-complete-symbol-function 'slime-fuzzy-complete-symbol
@@ -172,7 +170,7 @@ Elite search experience!
        :config (progn
      (add-hook 'slime-mode-hook 'set-up-slime-ac)
      (add-hook 'slime-repl-hook 'set-up-slime-ac)
-     (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode))))))
+     (eval-after-load "auto-complete" '(add-to-list 'ac-modes 'slime-repl-mode) )))
 
 #+END_SRC
 
