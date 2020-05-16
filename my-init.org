@@ -337,4 +337,8 @@ This is used for fuzzy search in M-x
 (define-key origami-mode-map (kbd "C-c v") 'origami-close-all-nodes)
 (define-key origami-mode-map (kbd "C-c p") 'origami-open-all-nodes)
 
-#+Endo_SrcoC
+#+END_SRC
+* Modeline
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline :ensure t :init (doom-modeline-mode-1))
+#+END_SRC
